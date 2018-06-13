@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			body{text-align: center;padding-top: 150px;}
+			canvas{box-shadow: 0 0 10px rgba(0,0,0,.5);}
+		</style>
+	</head>
+	<body>
+		<canvas id="cvs" width="800" height="600">
+			<span>该换浏览器了，太low了，canvas都不支持</span>
+		</canvas>
+	</body>
+</html>
+<script src="js/jquery-3.1.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	var oCan = document.getElementById('cvs');
+	var cvs = oCan.getContext('2d');
+	function Round (x,y,r,c,speedX,speedY) {
+		//圆的属性
+		this.directX = parseInt(Math.random()*2);//x轴运动方向，1右，0，左
+		this.directY = parseInt(Math.random()*2);//y轴运动方向，1下，0，上
+		this.x = x;//圆心x坐标
+		this.y = y;//圆心y坐标
+		this.r = r;//圆的半径
+		this.color = c;//颜色
+		this.speedX = speedX;
+		this.speedY = speedY;
+		//画圆方法
+		
+		this.draw = function () {
+			cvs.beginPath();
+			cvs.fillStyle = this.color;
+			cvs.arc(this.x,this.y,this.r,0,2*Math.PI);
+			cvs.fill();
+		}
+	}
+	function init () {
+		var star = [];
+		for (var i=0;i<100;i++) {
+			var x = Math.random()*$('#cvs').width();
+			var y = Math.random()*$('#cvs').height();
+			var ra = Math.random()*20+10;
+			var speedX = Math.random()*2+1;
+			var speedY = Math.random()*2+1;
+			var c = randomColor();
+			star.push(new Round(x,y,ra,c,speedX,speedY));
+			star[i].draw();
+		}
+   		setInterval(function () {
+			cvs.clearRect(0,0,oCan.width,oCan.height);
+			for (var i=0;i<star.length;i++) {
+				if (star[i].directX == 1) {//x向右移动
+					star[i].x += star[i].speedX;
+					if (star[i].x+star[i].r > oCan.width) {//触壁反弹
+						star[i].x = oCan.width-star[i].r;
+						star[i].directX = 0;
+					}
+				}else if (star[i].directX == 0) {//x向左移动
+					star[i].x -= star[i].speedX;
+					if (star[i].x < star[i].r) {//触壁反弹
+						star[i].x = star[i].r;
+						star[i].directX = 1;
+					}
+				}
+				if (star[i].directY == 1) {
+					star[i].y += star[i].speedY;
+					if (star[i].y+star[i].r > oCan.height) {
+						star[i].y = oCan.height - star[i].r;
+						star[i].directY = 0;
+					}
+				}else if (star[i].directY == 0) {
+					star[i].y -= star[i].speedY;
+					if (star[i].y < star[i].r) {
+						star[i].y = star[i].r
+						star[i].directY = 1;
+					}
+				}
+				star[i].draw();
+				
+			}
+		},10);
+	}
+	init();
+	function randomColor () {
+		var r = parseInt(Math.random()*255);
+		var g = parseInt(Math.random()*255);
+		var b = parseInt(Math.random()*255);
+		return 'rgb('+r+','+g+','+b+')';
+	}
+	
+</script>
